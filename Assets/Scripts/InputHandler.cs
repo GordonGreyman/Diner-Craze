@@ -4,9 +4,10 @@ public class InputHandler : MonoBehaviour
 {
     private Camera mainCamera;
     private GameObject activeTouchedObject = null;
-    private SelectedPerson selectedPerson = SelectedPerson.None;
+    public SelectedPerson selectedPerson = SelectedPerson.None;
     public GameObject waiterObj;
     public GameObject customerObj;
+    public GameObject chefObj;
 
     public enum SelectedPerson
     {
@@ -56,22 +57,11 @@ public class InputHandler : MonoBehaviour
         {
             activeTouchedObject = hit.collider.gameObject;
 
-            if (activeTouchedObject.CompareTag("Chef"))
-            {
-
-            }
-            else if (activeTouchedObject.CompareTag("Waiter"))
-            {
-
-            }
-            else if (activeTouchedObject.CompareTag("Table"))
-            {
-
-            }
-            else if (activeTouchedObject.CompareTag("Customer"))
-            {
-
-            }
+        }
+        else
+        {
+            selectedPerson = SelectedPerson.None;
+            ClearPeople();
         }
     }
 
@@ -88,10 +78,13 @@ public class InputHandler : MonoBehaviour
 
                 if (activeTouchedObject.CompareTag("Chef"))
                 {
+                    ClearPeople();
                     selectedPerson = SelectedPerson.Chef;
+                    chefObj = activeTouchedObject;
                 }
                 else if (activeTouchedObject.CompareTag("Waiter"))
                 {
+                    ClearPeople();
                     selectedPerson = SelectedPerson.Waiter;
                     waiterObj = activeTouchedObject;
 
@@ -99,6 +92,7 @@ public class InputHandler : MonoBehaviour
                 else if (activeTouchedObject.CompareTag("Table"))
                 {
                     var table = activeTouchedObject.GetComponent<TableScript>();
+                    Debug.Log("clicked table is " + table.gameObject.name);
                     CustomerScript customer = null;
                     WaiterScript waiter = null;
 
@@ -128,37 +122,47 @@ public class InputHandler : MonoBehaviour
                     {
 
                         //Clean code
+
+                        table.WaiterCleaned();
                         table.isDirty = false;
-                        Debug.Log("cleaned the " + table.name);
                     }
-                    else if (selectedPerson == SelectedPerson.Waiter && table.customerScript.currentState == CustomerScript.CurrentState.isWaitingToGiveOrders)
+                    else if (selectedPerson == SelectedPerson.Waiter && table.customerScript != null && table.customerScript.currentState == CustomerScript.CurrentState.isWaitingToGiveOrders)
                     {
+                        Debug.Log("took the order");
+
                         table.customerScript.currentState = CustomerScript.CurrentState.isWaitingToReceiveTheOrder;
                     }
-                    else if (selectedPerson == SelectedPerson.Waiter && table.customerScript.currentState == CustomerScript.CurrentState.isWaitingToReceiveTheOrder)
+                    else if (selectedPerson == SelectedPerson.Waiter && table.customerScript != null && table.customerScript.currentState == CustomerScript.CurrentState.isWaitingToReceiveTheOrder)
                     {
-                        //Serve the food
+                        table.CustomersLeaving();
                     }
-                    else if (selectedPerson == SelectedPerson.Waiter && table.customerScript.currentState == CustomerScript.CurrentState.isWaitingToPay)
+                    else if (selectedPerson == SelectedPerson.Waiter && table.customerScript != null && table.customerScript.currentState == CustomerScript.CurrentState.isWaitingToPay)
                     {
                         //Get the payment
                         
                     }
 
                     selectedPerson = SelectedPerson.None;
-                    customerObj = null;
-                    waiterObj = null;
-
+                    ClearPeople();
+                    table = null;
                 }
                 else if (activeTouchedObject.CompareTag("Customer"))
                 {
-                    Debug.Log("cUSTOMER SELECTED");
+                    ClearPeople();
                     selectedPerson = SelectedPerson.Customer;
                     customerObj = activeTouchedObject;
+                    
                 }
             }
 
             activeTouchedObject = null;
         }
+    }
+
+    private void ClearPeople()
+    {
+        customerObj = null;
+        waiterObj = null;
+        chefObj = null;
     }
 }

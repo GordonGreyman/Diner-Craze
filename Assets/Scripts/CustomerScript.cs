@@ -14,6 +14,7 @@ public class CustomerScript : MonoBehaviour
         isWaitingToGiveOrders,
         isWaitingToReceiveTheOrder,
         isWaitingToPay,
+        isLeaving,
     }
 
 
@@ -25,13 +26,10 @@ public class CustomerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(currentState);
+        Debug.Log(transform.name + " " + currentState);
     }
 
-    public void Sit()
-    {
 
-    }
 
     public IEnumerator Think()
     {

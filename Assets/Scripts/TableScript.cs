@@ -8,17 +8,27 @@ public class TableScript : MonoBehaviour
     public bool isDirty = false;
     public GameObject sittingCustomer;
     public CustomerScript customerScript;
-    public int tableNumber;
 
-    void Start()
+    private SpriteRenderer rd;
+
+    private void Start()
     {
-        
+        rd = GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
-    void Update()
+
+
+    public void CustomersLeaving()
     {
-        
+        rd.color = Color.black;
+        customerScript.currentState = CustomerScript.CurrentState.isLeaving;
+        isDirty = true;
+        isOccupied = false;
     }
 
+    public void WaiterCleaned()
+    {
+        rd.color = Color.white;
+
+    }
 }
