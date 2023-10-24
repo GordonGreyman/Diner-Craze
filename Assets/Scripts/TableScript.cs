@@ -7,9 +7,9 @@ public class TableScript : MonoBehaviour
     public bool isOccupied = false;
     public bool isDirty = false;
     public GameObject sittingCustomer;
-    public CustomerScript customerScript;
+    public CustomerScript customer;
 
-    private SpriteRenderer rd;
+    public SpriteRenderer rd;
 
     private void Start()
     {
@@ -17,18 +17,4 @@ public class TableScript : MonoBehaviour
     }
 
 
-
-    public void CustomersLeaving()
-    {
-        rd.color = Color.black;
-        customerScript.currentState = CustomerScript.CurrentState.isLeaving;
-        isDirty = true;
-        isOccupied = false;
-    }
-
-    public void WaiterCleaned()
-    {
-        rd.color = Color.white;
-
-    }
 }
