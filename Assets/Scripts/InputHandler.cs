@@ -131,7 +131,7 @@ public class InputHandler : MonoBehaviour
                 {
                     TableScript table = activeTouchedObject.GetComponent<TableScript>();
 
-                    if (selectedPerson == SelectedPerson.Customer && !table.isDirty && !table.isOccupied)
+                    if (selectedPerson == SelectedPerson.Customer && customerObj.GetComponent<CustomerScript>().currentState == CustomerScript.CurrentState.isStanding && !table.isDirty && !table.isOccupied)
                     {
                         customerObj.transform.SetParent(table.transform);
                         table.sittingCustomer = table.transform.GetChild(1).gameObject;
