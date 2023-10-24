@@ -88,21 +88,24 @@ public class InputHandler : MonoBehaviour
 
                         if (chef.currentState == ChefScript.CurrentState.Free && waiter.currentState == WaiterScript.CurrentState.GotTheOrder)
                         {
-                           
 
-                            chef.currentState = ChefScript.CurrentState.CookingFood;
-                            waiter.currentState = WaiterScript.CurrentState.Free;
-                            StartCoroutine(chef.PrepareFood());
+
+                            waiter.chef = chefObj.GetComponent<ChefScript>();
+                            StartCoroutine(waiter.GiveTheOrderToChef());
 
 
                         }
                         else if(chef.currentState == ChefScript.CurrentState.PreparedTheFood && waiter.currentState == WaiterScript.CurrentState.Free)
                         {
-                            chef.currentState = ChefScript.CurrentState.Free;
-                            waiter.currentState = WaiterScript.CurrentState.CarryingFood;
 
+                            StartCoroutine(waiter.GetTheFood());
                             ClearPeople();
                             selectedPerson = SelectedPerson.None;
+                        }
+                        else
+                        {
+                            selectedPerson = SelectedPerson.None;
+                            ClearPeople();
                         }
 
                     }
@@ -113,6 +116,8 @@ public class InputHandler : MonoBehaviour
 
                     }
                 }
+
+
                 else if (activeTouchedObject.CompareTag("Waiter"))
                 {
                     ClearPeople();
@@ -120,6 +125,8 @@ public class InputHandler : MonoBehaviour
                     waiterObj = activeTouchedObject;
 
                 }
+
+
                 else if (activeTouchedObject.CompareTag("Table"))
                 {
                     TableScript table = activeTouchedObject.GetComponent<TableScript>();
@@ -127,9 +134,10 @@ public class InputHandler : MonoBehaviour
                     if (selectedPerson == SelectedPerson.Customer && !table.isDirty && !table.isOccupied)
                     {
                         customerObj.transform.SetParent(table.transform);
-                        
                         table.sittingCustomer = table.transform.GetChild(1).gameObject;
                         table.customer = table.sittingCustomer.GetComponent<CustomerScript>();
+
+
                         StartCoroutine(table.customer.SitAndThink());
 
                         
@@ -151,31 +159,40 @@ public class InputHandler : MonoBehaviour
                     if (selectedPerson == SelectedPerson.Waiter)
                     {
                         WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
-                        waiter.tableCustomerSits = table.gameObject;
+                        waiter.table = table;
 
-                        if (table.isDirty && !table.isOccupied)
+                        if (table.isDirty && !table.isOccupied && !table.waiterHandles && waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
                         {
-                           StartCoroutine(waiter.ClearTable());
+                            StartCoroutine(waiter.ClearTable());
+                        }
+                        else if (!table.isOccupied && waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
+                        {
+                            StartCoroutine(waiter.WalkWithoutAction());
                         }
 
-                        if (table.isOccupied)
+                        if (table.isOccupied && !table.waiterHandles)
                         {
+
+
+
                             if (table.customer.currentState == CustomerScript.CurrentState.isWaitingToGiveOrders && waiter.currentState == WaiterScript.CurrentState.Free)
                             {
                                 // Waiter gets the order
                                 StartCoroutine(waiter.GetTheOrder());
-                                table.customer.currentState = CustomerScript.CurrentState.isWaitingToReceiveTheOrder;
                             }
                             else if (table.customer.currentState == CustomerScript.CurrentState.isWaitingToReceiveTheOrder && waiter.currentState == WaiterScript.CurrentState.CarryingFood)
                             {
                                 // Waiter delivers food
-                                waiter.currentState = WaiterScript.CurrentState.Free;
-                                StartCoroutine(table.customer.Eat());
+                                StartCoroutine(waiter.ServeTheFood());
                             }
                             else if (table.customer.currentState == CustomerScript.CurrentState.isWaitingToPay)
                             {
                                 // Waiter collects payment
                                 table.customer.PayAndLeave();
+                            }
+                            else if (waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
+                            {
+                                StartCoroutine(waiter.WalkWithoutAction());
                             }
                         }
                     }

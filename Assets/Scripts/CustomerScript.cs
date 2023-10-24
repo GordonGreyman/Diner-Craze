@@ -1,11 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class CustomerScript : MonoBehaviour
 {
-    public CurrentState currentState = CurrentState.None;
+    public CurrentState currentState = CurrentState.isStanding;
     public TableScript tableCustomerSits;
+    public SpriteRenderer rd;
+    public TextMeshProUGUI text;
+
+    private void Start()
+    {
+        rd = GetComponent<SpriteRenderer>();
+    }
     public enum CurrentState
     {
         None,
@@ -42,22 +50,34 @@ public class CustomerScript : MonoBehaviour
 
         transform.position = targetPosition;
 
+        rd.color = Color.green;
+        text.text = currentState.ToString();
+
         float seconds = Random.Range(3, 6);
         yield return new WaitForSeconds(seconds);
 
         currentState = CurrentState.isWaitingToGiveOrders;
+
+        rd.color = Color.yellow;
+        text.text = currentState.ToString();
+
     }
 
 
     public IEnumerator Eat()
     {
         currentState = CurrentState.isEating;
+        rd.color = Color.red;
+        text.text = currentState.ToString();
+
 
         float seconds = Random.Range(3, 6);
         yield return new WaitForSeconds(seconds);
 
         currentState = CurrentState.isWaitingToPay;
 
+        rd.color = Color.blue;
+        text.text = currentState.ToString();
 
         tableCustomerSits.rd.color = Color.black;
         tableCustomerSits.isDirty = true;
@@ -67,6 +87,9 @@ public class CustomerScript : MonoBehaviour
     public void PayAndLeave()
     {
         Debug.Log("al abimmm");
+        rd.color = Color.white;
+        text.text = currentState.ToString();
+
         Transform customerAsChild = tableCustomerSits.transform.GetChild(1);
         customerAsChild.parent = null;
         tableCustomerSits.isOccupied = false;

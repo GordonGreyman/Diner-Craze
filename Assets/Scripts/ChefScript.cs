@@ -16,8 +16,7 @@ public class ChefScript : MonoBehaviour
 
     public IEnumerator PrepareFood()
     {
-        Debug.Log("someone cooked here");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         currentState = CurrentState.PreparedTheFood;
     }
 }
