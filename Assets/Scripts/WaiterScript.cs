@@ -8,10 +8,10 @@ public class WaiterScript : MonoBehaviour
     public CurrentState currentState = CurrentState.Free;
     AIPath aiPath;
     AIDestinationSetter aiDestinationSetter;
-    private float stopDistance = 0.1f;
-    private float checkDistance = 0.3f;
+    public bool performingAnAction = false;
+    private float stopDistance = 0.2f;
+    private float checkDistance = 1f;
     public TextMeshProUGUI text;
-
     public TableScript table;
     public ChefScript chef;
 
@@ -19,6 +19,7 @@ public class WaiterScript : MonoBehaviour
     {
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
         aiPath = GetComponent<AIPath>();
+        
     }
     public enum CurrentState
     {
@@ -31,6 +32,8 @@ public class WaiterScript : MonoBehaviour
 
     public IEnumerator WalkWithoutAction()
     {
+        performingAnAction = true;
+
         CurrentState previousState = currentState;
         currentState = CurrentState.Walking;
         text.text = currentState.ToString();
@@ -56,10 +59,11 @@ public class WaiterScript : MonoBehaviour
 
         currentState = previousState;
         text.text = currentState.ToString();
-
+        performingAnAction = false;
     }
     public IEnumerator ClearTable()
     {
+        performingAnAction = true;
 
         CurrentState previousState = currentState;
         currentState = CurrentState.Walking;
@@ -98,11 +102,12 @@ public class WaiterScript : MonoBehaviour
 
         currentState = previousState;
         text.text = currentState.ToString();
-
+        performingAnAction = false;
     }
 
     public IEnumerator GetTheOrder()
     {
+        performingAnAction = true;
 
         currentState = CurrentState.Walking;
         text.text = currentState.ToString();
@@ -134,13 +139,15 @@ public class WaiterScript : MonoBehaviour
 
         currentState = CurrentState.GotTheOrder;
         text.text = currentState.ToString();
-
+        performingAnAction = false;
 
     }
 
 
     public IEnumerator GiveTheOrderToChef()
     {
+        performingAnAction = true;
+
         currentState = CurrentState.Walking;
         text.text = currentState.ToString();
 
@@ -166,10 +173,12 @@ public class WaiterScript : MonoBehaviour
 
         currentState = CurrentState.Free;
         text.text = currentState.ToString();
-
+        performingAnAction = false;
     }
     public IEnumerator GetTheFood()
     {
+        performingAnAction = true;
+
         currentState = CurrentState.Walking;
         text.text = currentState.ToString();
 
@@ -195,11 +204,12 @@ public class WaiterScript : MonoBehaviour
 
         currentState = CurrentState.CarryingFood;
         text.text = currentState.ToString();
-
+        performingAnAction = false;
     }
 
     public IEnumerator ServeTheFood()
     {
+        performingAnAction = true;
         currentState = CurrentState.Walking;
         text.text = currentState.ToString();
 
@@ -228,6 +238,7 @@ public class WaiterScript : MonoBehaviour
 
         currentState = CurrentState.Free;
         text.text = currentState.ToString();
+        performingAnAction = false;
     }
 
 

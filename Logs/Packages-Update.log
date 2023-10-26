@@ -45,3 +45,18 @@ The following packages were updated:
   com.unity.test-framework from version 1.1.29 to 1.1.31
   com.unity.timeline from version 1.6.2 to 1.6.4
   com.unity.visualscripting from version 1.7.2 to 1.7.6
+
+=== Thu Oct 26 06:08:44 2023
+
+Packages were changed.
+Update Mode: mergeDefaultDependencies
+
+The following packages were added:
+  com.unity.2d.sprite@1.0.0
+  com.unity.2d.tilemap@1.0.0
+  com.unity.nuget.newtonsoft-json@3.0.2
+  com.unity.xr.legacyinputhelpers@2.1.10
+The following packages were updated:
+  com.unity.ide.visualstudio from version 2.0.15 to 2.0.17
+  com.unity.test-framework from version 1.1.31 to 1.1.33
+  com.unity.timeline from version 1.6.4 to 1.7.2

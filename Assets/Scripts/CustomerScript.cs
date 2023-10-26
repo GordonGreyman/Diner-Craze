@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -9,7 +8,10 @@ public class CustomerScript : MonoBehaviour
     public TableScript tableCustomerSits;
     public SpriteRenderer rd;
     public TextMeshProUGUI text;
+    public JSONHandler json;
 
+    public delegate void MoneyChangedHandler();
+    public static event MoneyChangedHandler OnMoneyChange;
     private void Start()
     {
         rd = GetComponent<SpriteRenderer>();
@@ -23,11 +25,6 @@ public class CustomerScript : MonoBehaviour
         isWaitingToReceiveTheOrder,
         isEating,
         isWaitingToPay,
-    }
-
-    private void Update()
-    {
-        Debug.Log(currentState);
     }
 
     public IEnumerator SitAndThink()
@@ -45,7 +42,7 @@ public class CustomerScript : MonoBehaviour
             float step = moveSpeed * Time.deltaTime;
 
             transform.position = transform.position + moveDirection * step;
-            yield return null;
+            yield return null;           
         }
 
         transform.position = targetPosition;
@@ -54,7 +51,7 @@ public class CustomerScript : MonoBehaviour
         text.text = currentState.ToString();
 
         float seconds = Random.Range(3, 6);
-        yield return new WaitForSeconds(seconds);
+        yield return new WaitForSecondsRealtime(seconds);
 
         currentState = CurrentState.isWaitingToGiveOrders;
 
@@ -72,7 +69,7 @@ public class CustomerScript : MonoBehaviour
 
 
         float seconds = Random.Range(3, 6);
-        yield return new WaitForSeconds(seconds);
+        yield return new WaitForSecondsRealtime(seconds);
 
         currentState = CurrentState.isWaitingToPay;
 
@@ -86,14 +83,17 @@ public class CustomerScript : MonoBehaviour
 
     public void PayAndLeave()
     {
-        Debug.Log("al abimmm");
+
+        json.AddMoney(10);
+
         rd.color = Color.white;
         text.text = currentState.ToString();
 
-        Transform customerAsChild = tableCustomerSits.transform.GetChild(1);
-        customerAsChild.parent = null;
+        transform.parent = null;
         tableCustomerSits.isOccupied = false;
-        currentState = CustomerScript.CurrentState.None;
-       
+        currentState = CurrentState.isStanding;
+        text.text = currentState.ToString();
+        OnMoneyChange?.Invoke();
     }
+
 }

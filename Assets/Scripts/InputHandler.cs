@@ -159,7 +159,8 @@ public class InputHandler : MonoBehaviour
                     if (selectedPerson == SelectedPerson.Waiter)
                     {
                         WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
-                        waiter.table = table;
+                        if(!waiter.performingAnAction)
+                            waiter.table = table;
 
                         if (table.isDirty && !table.isOccupied && !table.waiterHandles && waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
                         {
