@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class JSONHandler : MonoBehaviour
 {
@@ -41,11 +42,13 @@ public class JSONHandler : MonoBehaviour
             {
                 string readJson = File.ReadAllText(savePath);
                 gameData = JsonUtility.FromJson<GameData>(readJson);
+                text.text = "Money: " + GetMoney().ToString();
+
                 Debug.Log("Game data loaded.");
             }
             else
             {
-                gameData = new GameData(1, 0,3);
+                gameData = new GameData(1, 0, 3, 1);
                 SaveGameData();
             }
         }
@@ -57,8 +60,12 @@ public class JSONHandler : MonoBehaviour
 
     public void ResetGameData()
     {
-        gameData = new GameData(1, 0, 3);
+        gameData = new GameData(1, 0, 3, 1);
         SaveGameData();
+
+        SceneManager.LoadScene("SampleScene");
+
+
     }
 
 
@@ -75,21 +82,20 @@ public class JSONHandler : MonoBehaviour
 
     public IEnumerator delay()
     {
-        yield return new WaitForSecondsRealtime(.5f);
+
+        CheckTableCount();
+        yield return new WaitForSecondsRealtime(1f);
         EnableTables();
     }
     public void EnableTables()
     {
-        Debug.Log("outside");
-
         for (int i = 0; i < gameData.tableCount; i++)
         {
-            Debug.Log("inside: " + i);
             tables[i].SetActive(true);
-            Debug.Log("after activation: " + i);
-
         }
     }
+
+
     public int GetMoney()
     {
         return gameData.money;
@@ -109,9 +115,33 @@ public class JSONHandler : MonoBehaviour
         gameData.money -= moneyToRemove;
     }
 
+
+
+    public void AddTable()
+    {
+        gameData.tableCount += 1;
+    }
+
+
+
+    public int GetLevel()
+    {
+        return gameData.level;
+    }
     public void NextLevel()
     {
         gameData.level++;
+    }
+
+
+
+    public float GetPrestige()
+    {
+        return gameData.prestige;
+    }
+    public void AddPrestige(float addedPrestige)
+    {
+        gameData.prestige += addedPrestige;
     }
 
  

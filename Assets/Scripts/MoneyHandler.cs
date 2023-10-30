@@ -10,10 +10,10 @@ public class MoneyHandler : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Delay(.5f));
+        StartCoroutine(Delay(.1f));
 
         CustomerScript.OnMoneyChange += ShowMoney;
-        StartCoroutine(DelayFor(1));
+        StartCoroutine(DelayFor(1.5f));
     }
 
 

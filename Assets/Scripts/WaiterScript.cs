@@ -48,6 +48,14 @@ public class WaiterScript : MonoBehaviour
 
             while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
             {
+                if(aiPath.desiredVelocity.x <= 0.01f)
+                {
+                    transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+                }
+                else if (aiPath.desiredVelocity.x >= 0.01f)
+                {
+                    transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                }
                 yield return null;
             }
 
@@ -60,6 +68,10 @@ public class WaiterScript : MonoBehaviour
         currentState = previousState;
         text.text = currentState.ToString();
         performingAnAction = false;
+        if (table.isDirty)
+        {
+           table.customer.PayAndLeave();
+        }
     }
     public IEnumerator ClearTable()
     {
@@ -80,6 +92,14 @@ public class WaiterScript : MonoBehaviour
 
             while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
             {
+                if (aiPath.desiredVelocity.x <= 0.1f)
+                {
+                    transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+                }
+                else if (aiPath.desiredVelocity.x >= 0.1f)
+                {
+                    transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                }
                 yield return null;
             }
         
@@ -87,8 +107,6 @@ public class WaiterScript : MonoBehaviour
 
         aiDestinationSetter.target = null;
         aiPath.enabled = false;
-        table.waiterHandles = false;
-
 
         currentState = CurrentState.ClearingTable;
         text.text = currentState.ToString();
@@ -175,6 +193,7 @@ public class WaiterScript : MonoBehaviour
         text.text = currentState.ToString();
         performingAnAction = false;
     }
+
     public IEnumerator GetTheFood()
     {
         performingAnAction = true;
@@ -188,12 +207,10 @@ public class WaiterScript : MonoBehaviour
 
         if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
         {
-
             while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
             {
                 yield return null;
             }
-
         }
 
         aiDestinationSetter.target = null;
@@ -222,12 +239,10 @@ public class WaiterScript : MonoBehaviour
 
         if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
         {
-
             while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
             {
                 yield return null;
             }
-
         }
 
         aiDestinationSetter.target = null;
@@ -240,8 +255,5 @@ public class WaiterScript : MonoBehaviour
         text.text = currentState.ToString();
         performingAnAction = false;
     }
-
-
-
 }
 

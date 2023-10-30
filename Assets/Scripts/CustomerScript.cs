@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class CustomerScript : MonoBehaviour
 {
@@ -8,12 +9,15 @@ public class CustomerScript : MonoBehaviour
     public TableScript tableCustomerSits;
     public SpriteRenderer rd;
     public TextMeshProUGUI text;
+    public int customerType;
     public JSONHandler json;
-
+    public CustomerSpawner customerSpawner;
     public delegate void MoneyChangedHandler();
     public static event MoneyChangedHandler OnMoneyChange;
     private void Start()
     {
+        customerSpawner = FindObjectOfType<CustomerSpawner>();
+        json = FindObjectOfType<JSONHandler>();
         rd = GetComponent<SpriteRenderer>();
     }
     public enum CurrentState
@@ -29,12 +33,26 @@ public class CustomerScript : MonoBehaviour
 
     public IEnumerator SitAndThink()
     {
+        transform.tag = "Player";
         tableCustomerSits = transform.parent.GetComponent<TableScript>();
         currentState = CurrentState.isThinking;
         tableCustomerSits.isOccupied = true;
+        GameObject a = GameObject.FindGameObjectWithTag("Player");
+
+        for (int i = 0; i < customerSpawner.activeCustomers.Count; i++)
+        {
+            if (customerSpawner.activeCustomers[i] == a)
+            {
+                Debug.Log("i: " + i);
+                customerSpawner.activeCustomers[i] = null;
+                break;
+            }
+        }
+        transform.tag = "Untagged";
+        StartCoroutine(customerSpawner.SwipeDown());
 
         float moveSpeed = 5.0f;
-        Vector3 targetPosition = new Vector3(tableCustomerSits.transform.position.x, tableCustomerSits.transform.position.y + 1, tableCustomerSits.transform.position.z);
+        Vector3 targetPosition = new Vector3(tableCustomerSits.transform.position.x, tableCustomerSits.transform.position.y + 1.5f, tableCustomerSits.transform.position.z);
 
         while (Vector3.Distance(transform.position, targetPosition) > 0.1f)
         {
@@ -42,7 +60,7 @@ public class CustomerScript : MonoBehaviour
             float step = moveSpeed * Time.deltaTime;
 
             transform.position = transform.position + moveDirection * step;
-            yield return null;           
+            yield return null;
         }
 
         transform.position = targetPosition;
@@ -50,7 +68,7 @@ public class CustomerScript : MonoBehaviour
         rd.color = Color.green;
         text.text = currentState.ToString();
 
-        float seconds = Random.Range(3, 6);
+        float seconds = UnityEngine.Random.Range(3, 6);
         yield return new WaitForSecondsRealtime(seconds);
 
         currentState = CurrentState.isWaitingToGiveOrders;
@@ -68,7 +86,7 @@ public class CustomerScript : MonoBehaviour
         text.text = currentState.ToString();
 
 
-        float seconds = Random.Range(3, 6);
+        float seconds = UnityEngine.Random.Range(3, 6);
         yield return new WaitForSecondsRealtime(seconds);
 
         currentState = CurrentState.isWaitingToPay;
@@ -94,6 +112,8 @@ public class CustomerScript : MonoBehaviour
         currentState = CurrentState.isStanding;
         text.text = currentState.ToString();
         OnMoneyChange?.Invoke();
+        Destroy(transform.gameObject);
+
     }
 
 }

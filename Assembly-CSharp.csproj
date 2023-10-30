@@ -61,6 +61,7 @@
     <Compile Include="Assets\Scripts\TableScript.cs" />
     <Compile Include="Assets\Scripts\WaiterScript.cs" />
     <Compile Include="Assets\Scripts\MoneyHandler.cs" />
+    <Compile Include="Assets\Scripts\CustomerSpawner.cs" />
     <Compile Include="Assets\Scripts\InputHandler.cs" />
     <Compile Include="Assets\Scripts\ChefScript.cs" />
     <Compile Include="Assets\Scripts\JSONHandler.cs" />

@@ -166,7 +166,7 @@ public class InputHandler : MonoBehaviour
                         {
                             StartCoroutine(waiter.ClearTable());
                         }
-                        else if (!table.isOccupied && waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
+                        else if (!table.isOccupied && !table.waiterHandles && waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
                         {
                             StartCoroutine(waiter.WalkWithoutAction());
                         }
@@ -188,8 +188,7 @@ public class InputHandler : MonoBehaviour
                             }
                             else if (table.customer.currentState == CustomerScript.CurrentState.isWaitingToPay)
                             {
-                                // Waiter collects payment
-                                table.customer.PayAndLeave();
+                                StartCoroutine(waiter.WalkWithoutAction());
                             }
                             else if (waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
                             {
