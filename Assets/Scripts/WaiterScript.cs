@@ -14,6 +14,7 @@ public class WaiterScript : MonoBehaviour
     public TextMeshProUGUI text;
     public TableScript table;
     public ChefScript chef;
+    public FoodScript food;
 
     private void Start()
     {
@@ -48,13 +49,13 @@ public class WaiterScript : MonoBehaviour
 
             while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
             {
-                if(aiPath.desiredVelocity.x <= 0.01f)
+                if (aiPath.desiredVelocity.x <= -0.1f)
                 {
-                    transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+                    transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
                 }
-                else if (aiPath.desiredVelocity.x >= 0.01f)
+                else if (aiPath.desiredVelocity.x >= 0.1f)
                 {
-                    transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
                 }
                 yield return null;
             }
@@ -92,13 +93,13 @@ public class WaiterScript : MonoBehaviour
 
             while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
             {
-                if (aiPath.desiredVelocity.x <= 0.1f)
+                if (aiPath.desiredVelocity.x <= -0.1f)
                 {
-                    transform.localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+                    transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
                 }
                 else if (aiPath.desiredVelocity.x >= 0.1f)
                 {
-                    transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
                 }
                 yield return null;
             }
@@ -201,7 +202,7 @@ public class WaiterScript : MonoBehaviour
         currentState = CurrentState.Walking;
         text.text = currentState.ToString();
 
-        Transform destination = chef.transform.GetChild(0);
+        Transform destination = food.transform.GetChild(0);
         aiDestinationSetter.target = destination.transform;
         aiPath.enabled = true;
 
@@ -216,9 +217,7 @@ public class WaiterScript : MonoBehaviour
         aiDestinationSetter.target = null;
         aiPath.enabled = false;
 
-        chef.currentState = ChefScript.CurrentState.Free;
-
-
+        Destroy(food.gameObject);
         currentState = CurrentState.CarryingFood;
         text.text = currentState.ToString();
         performingAnAction = false;

@@ -80,7 +80,7 @@ public class InputHandler : MonoBehaviour
                 {
                     if (selectedPerson == SelectedPerson.Waiter)
                     {
-                        
+
                         chefObj = activeTouchedObject;
                         ChefScript chef = chefObj.GetComponent<ChefScript>();
 
@@ -95,25 +95,15 @@ public class InputHandler : MonoBehaviour
 
 
                         }
-                        else if(chef.currentState == ChefScript.CurrentState.PreparedTheFood && waiter.currentState == WaiterScript.CurrentState.Free)
-                        {
 
-                            StartCoroutine(waiter.GetTheFood());
-                            ClearPeople();
-                            selectedPerson = SelectedPerson.None;
-                        }
-                        else
-                        {
-                            selectedPerson = SelectedPerson.None;
-                            ClearPeople();
-                        }
+                        selectedPerson = SelectedPerson.None;
+                        ClearPeople();
 
                     }
                     else
                     {
                         ClearPeople();
                         selectedPerson = SelectedPerson.Chef;
-
                     }
                 }
 
@@ -140,7 +130,7 @@ public class InputHandler : MonoBehaviour
 
                         StartCoroutine(table.customer.SitAndThink());
 
-                        
+
                     }
                     else if (selectedPerson == SelectedPerson.Customer && table.isOccupied)
                     {
@@ -159,7 +149,7 @@ public class InputHandler : MonoBehaviour
                     if (selectedPerson == SelectedPerson.Waiter)
                     {
                         WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
-                        if(!waiter.performingAnAction)
+                        if (!waiter.performingAnAction)
                             waiter.table = table;
 
                         if (table.isDirty && !table.isOccupied && !table.waiterHandles && waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
@@ -202,7 +192,7 @@ public class InputHandler : MonoBehaviour
                     table = null;
                 }
 
-                                // WAITER'S TABLE    BEHAVIOR ENDS
+                // WAITER'S TABLE    BEHAVIOR ENDS
 
 
 
@@ -212,8 +202,32 @@ public class InputHandler : MonoBehaviour
                     ClearPeople();
                     selectedPerson = SelectedPerson.Customer;
                     customerObj = activeTouchedObject;
-                    
                 }
+
+
+                else if (activeTouchedObject.CompareTag("Food"))
+                {
+
+                    if (selectedPerson == SelectedPerson.Waiter && waiterObj.GetComponent<WaiterScript>().currentState == WaiterScript.CurrentState.Free)
+                    {
+                        FoodScript food = activeTouchedObject.GetComponent<FoodScript>();
+                        ChefScript chef = food.chefThatPrepared.GetComponent<ChefScript>();
+                        WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
+
+                        for (int i = 0; i < chef.platePoints.Count; i++)
+                        {
+
+                            if (food.gameObject == chef.platePoints[i])
+                            {
+                                chef.platePoints[i] = null;
+                                waiter.food = food;
+                                StartCoroutine(waiter.GetTheFood());
+                            }
+                        }
+                    }
+
+                }
+
             }
             activeTouchedObject = null;
         }

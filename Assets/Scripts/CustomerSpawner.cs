@@ -10,7 +10,7 @@ public class CustomerSpawner : MonoBehaviour
     public GameObject spawnPoint;
     public bool isSwiping = false;
 
-    private float yOffset = 1.0f; // Adjust this value for the desired Y offset
+    private float yOffset = 1.0f; 
 
     void Start()
     {
@@ -36,7 +36,7 @@ public class CustomerSpawner : MonoBehaviour
 
             if (hasEmptyPlace && !isSwiping)
             {
-                float wait = 0.5f / json.GetPrestige();
+                float wait = 5f / json.GetPrestige();
                 yield return new WaitForSecondsRealtime(wait);
 
                 for (int i = 0; i < activeCustomers.Count; i++)
@@ -93,8 +93,6 @@ public class CustomerSpawner : MonoBehaviour
             customer.transform.position = Vector3.Lerp(initialPosition, targetPosition, normalizedTime);
             yield return null;
         }
-
-        // Ensure the final position is exactly the target position
         customer.transform.position = targetPosition;
 
     }

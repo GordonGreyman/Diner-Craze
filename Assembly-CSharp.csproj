@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\InputHandler.cs" />
     <Compile Include="Assets\Scripts\ChefScript.cs" />
     <Compile Include="Assets\Scripts\JSONHandler.cs" />
+    <Compile Include="Assets\Scripts\FoodScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

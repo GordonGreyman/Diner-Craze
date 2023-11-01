@@ -8,6 +8,7 @@ TagManager:
   - Chef
   - Waiter
   - Customer
+  - Food
   layers:
   - Default
   - TransparentFX
