@@ -1,5 +1,6 @@
 using UnityEngine;
-
+using System.Collections;
+using UnityEngine.Rendering.Universal;
 public class InputHandler : MonoBehaviour
 {
     private Camera mainCamera;
@@ -58,11 +59,6 @@ public class InputHandler : MonoBehaviour
             activeTouchedObject = hit.collider.gameObject;
 
         }
-        else
-        {
-            selectedPerson = SelectedPerson.None;
-            ClearPeople();
-        }
     }
 
     private void HandleTouchEnd(Vector2 inputPosition)
@@ -96,8 +92,8 @@ public class InputHandler : MonoBehaviour
 
                         }
 
-                        selectedPerson = SelectedPerson.None;
-                        ClearPeople();
+
+                        chefObj = null;
 
                     }
                     else
@@ -110,9 +106,18 @@ public class InputHandler : MonoBehaviour
 
                 else if (activeTouchedObject.CompareTag("Waiter"))
                 {
+                    if(waiterObj != null)
+                    {
+                        waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
+                    }
+                    if (customerObj != null)
+                    {
+                        customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
+                    }
                     ClearPeople();
                     selectedPerson = SelectedPerson.Waiter;
                     waiterObj = activeTouchedObject;
+                    waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;
 
                 }
 
@@ -127,21 +132,17 @@ public class InputHandler : MonoBehaviour
                         table.sittingCustomer = table.transform.GetChild(1).gameObject;
                         table.customer = table.sittingCustomer.GetComponent<CustomerScript>();
 
-
                         StartCoroutine(table.customer.SitAndThink());
 
+                        StartCoroutine(ReturnToWaiter());
+
 
                     }
-                    else if (selectedPerson == SelectedPerson.Customer && table.isOccupied)
+                    else if (selectedPerson == SelectedPerson.Customer && (table.isOccupied || table.isDirty))
                     {
-                        Debug.Log("Table is occupied");
+                        StartCoroutine(ReturnToWaiter());
                     }
-                    else if (selectedPerson == SelectedPerson.Customer && table.isDirty)
-                    {
-                        Debug.Log("Table is dirty");
-                    }
-
-
+                     
 
 
                     // WAITER'S TABLE BEHAVIOR STARTS
@@ -185,11 +186,7 @@ public class InputHandler : MonoBehaviour
                                 StartCoroutine(waiter.WalkWithoutAction());
                             }
                         }
-                    }
-
-                    selectedPerson = SelectedPerson.None;
-                    ClearPeople();
-                    table = null;
+                    }       
                 }
 
                 // WAITER'S TABLE    BEHAVIOR ENDS
@@ -199,9 +196,18 @@ public class InputHandler : MonoBehaviour
 
                 else if (activeTouchedObject.CompareTag("Customer"))
                 {
-                    ClearPeople();
+                    if(customerObj != null)
+                    {
+                        customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;                   //Take the already highlightened customer and de-highlight it
+
+                    }
                     selectedPerson = SelectedPerson.Customer;
                     customerObj = activeTouchedObject;
+                    customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;                        //Highlight the current customer and de-highlight the last waiter
+                    if (waiterObj != null)
+                    {
+                        waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
+                    }
                 }
 
 
@@ -238,5 +244,18 @@ public class InputHandler : MonoBehaviour
         customerObj = null;
         waiterObj = null;
         chefObj = null;
+    }
+
+    private IEnumerator ReturnToWaiter()
+    {
+        selectedPerson = SelectedPerson.None;
+        customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
+        customerObj = null;
+        yield return new WaitForSecondsRealtime(0.1f);
+        if(waiterObj != null)
+        {
+            selectedPerson = SelectedPerson.Waiter;
+            waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;
+        }
     }
 }
