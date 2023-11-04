@@ -52,16 +52,32 @@ public class InputHandler : MonoBehaviour
     private void HandleTouchStart(Vector2 inputPosition)
     {
         Vector2 touchPosition = mainCamera.ScreenToWorldPoint(inputPosition);
-        RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
 
-        if (hit.collider != null)
+        // Perform the raycast.
+        RaycastHit2D[] hits = Physics2D.RaycastAll(touchPosition, Vector2.zero);
+
+        // If there's more than one hit, prioritize food.
+        if (hits.Length > 1)
+        {
+            foreach (var hit in hits)
+            {
+                if (hit.collider.CompareTag("Food"))
+                {
+                    activeTouchedObject = hit.collider.gameObject;
+                    return; // Prioritize food and exit the loop.
+                }
+            }
+        }
+
+        // If no food was found or there's only one hit, check for other objects (e.g., chef).
+        foreach (var hit in hits)
         {
             activeTouchedObject = hit.collider.gameObject;
+            return; // Use the first hit.
         }
-        else
-        {
-            StartCoroutine(ReturnToWaiter());
-        }
+
+        // If no hits at all, return to waiter.
+        StartCoroutine(ReturnToWaiter());
     }
 
     private void HandleTouchEnd(Vector2 inputPosition)
@@ -97,39 +113,10 @@ public class InputHandler : MonoBehaviour
 
                 }
 
-                else if (activeTouchedObject.CompareTag("Chef"))
-                {
-                    if (selectedPerson == SelectedPerson.Waiter)
-                    {
-
-                        chefObj = activeTouchedObject;
-                        ChefScript chef = chefObj.GetComponent<ChefScript>();
-                        WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
-
-                        if (chef.currentState == ChefScript.CurrentState.Free && waiter.currentState == WaiterScript.CurrentState.GotTheOrder)
-                        {
-
-
-                            waiter.chef = chefObj.GetComponent<ChefScript>();
-                            StartCoroutine(waiter.GiveTheOrderToChef());
-
-
-                        }
-
-
-                        chefObj = null;
-
-                    }
-                    else
-                    {
-                        StartCoroutine(ReturnToWaiter());
-                    }
-                }
-
 
                 else if (activeTouchedObject.CompareTag("Waiter"))
                 {
-                    if(waiterObj != null)
+                    if (waiterObj != null)
                     {
                         waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
                     }
@@ -141,8 +128,8 @@ public class InputHandler : MonoBehaviour
                     selectedPerson = SelectedPerson.Waiter;
                     waiterObj = activeTouchedObject;
                     waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;
-
                 }
+
 
 
                 else if (activeTouchedObject.CompareTag("Table"))
@@ -215,7 +202,34 @@ public class InputHandler : MonoBehaviour
 
 
 
+                else if (activeTouchedObject.CompareTag("Chef"))
+                {
+                    if (selectedPerson == SelectedPerson.Waiter)
+                    {
 
+                        chefObj = activeTouchedObject;
+                        ChefScript chef = chefObj.GetComponent<ChefScript>();
+                        WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
+
+                        if (chef.currentState == ChefScript.CurrentState.Free && waiter.currentState == WaiterScript.CurrentState.GotTheOrder)
+                        {
+
+
+                            waiter.chef = chefObj.GetComponent<ChefScript>();
+                            StartCoroutine(waiter.GiveTheOrderToChef());
+
+
+                        }
+
+
+                        chefObj = null;
+
+                    }
+                    else
+                    {
+                        StartCoroutine(ReturnToWaiter());
+                    }
+                }
 
 
                 else if (activeTouchedObject.CompareTag("Customer"))

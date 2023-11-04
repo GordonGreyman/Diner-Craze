@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2206422819419421522}
   - component: {fileID: 3309355627646370240}
   - component: {fileID: 8139419174504524725}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Food 1
   m_TagString: Food
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4639278720635410988}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Target Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}

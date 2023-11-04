@@ -10,8 +10,8 @@ public class CustomerSpawner : MonoBehaviour
     public bool isSwiping = false;
     public bool dayEnded = false;
 
-    public int totalCustomerCount = 0;
-
+    public int handledCustomerCount = 0;
+    
     private float yOffset = 1.0f; 
 
     void Start()
@@ -62,8 +62,6 @@ public class CustomerSpawner : MonoBehaviour
 
                             Color randomColor = new Color(r, g, b);
                             activeCustomers[i].GetComponent<SpriteRenderer>().color = randomColor;
-
-                            totalCustomerCount++;
 
                             break;
                         }

@@ -137,14 +137,13 @@ public class CustomerScript : MonoBehaviour
             default:
                 break;
         }
-
-        text.text = currentState.ToString();
-
-        transform.parent = null;
-        tableCustomerSits.isOccupied = false;
+        customerSpawner.handledCustomerCount++;
         OnMoneyChange?.Invoke();
 
-        
+        tableCustomerSits.isOccupied = false;
+
+
+
         Destroy(transform.gameObject);
 
     }

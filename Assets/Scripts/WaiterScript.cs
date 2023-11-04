@@ -33,45 +33,49 @@ public class WaiterScript : MonoBehaviour
 
     public IEnumerator WalkWithoutAction()
     {
-        performingAnAction = true;
-
-        CurrentState previousState = currentState;
-        currentState = CurrentState.Walking;
-        text.text = currentState.ToString();
-
-        table.waiterHandles = true;
-        Transform destination = table.transform.GetChild(0);
-        aiDestinationSetter.target = destination.transform;
-        aiPath.enabled = true;
-
-        if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
+        if (currentState == CurrentState.Free)
         {
+            performingAnAction = true;
 
-            while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
+            CurrentState previousState = currentState;
+            currentState = CurrentState.Walking;
+            text.text = currentState.ToString();
+
+            table.waiterHandles = true;
+            Transform destination = table.transform.GetChild(0);
+            aiDestinationSetter.target = destination.transform;
+            aiPath.enabled = true;
+
+            if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
             {
-                if (aiPath.desiredVelocity.x <= -0.1f)
+
+                while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
                 {
-                    transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    if (aiPath.desiredVelocity.x <= -0.1f)
+                    {
+                        transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    }
+                    else if (aiPath.desiredVelocity.x >= 0.1f)
+                    {
+                        transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    }
+                    yield return null;
                 }
-                else if (aiPath.desiredVelocity.x >= 0.1f)
-                {
-                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-                }
-                yield return null;
+
             }
 
-        }
+            aiDestinationSetter.target = null;
+            aiPath.enabled = false;
+            table.waiterHandles = false;
 
-        aiDestinationSetter.target = null;
-        aiPath.enabled = false;
-        table.waiterHandles = false;
+            currentState = previousState;
+            text.text = currentState.ToString();
 
-        currentState = previousState;
-        text.text = currentState.ToString();
-        performingAnAction = false;
-        if (table.isDirty && table.isOccupied)
-        {
-           table.customer.PayAndLeave();
+            if (table.isDirty && table.isOccupied)
+            {
+                table.customer.PayAndLeave();
+            }
+            performingAnAction = false;
         }
     }
     public IEnumerator ClearTable()
