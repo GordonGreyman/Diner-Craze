@@ -59,14 +59,17 @@
     <Compile Include="Assets\Scripts\FoodScript.cs" />
     <Compile Include="Assets\Scripts\Game Data.cs" />
     <Compile Include="Assets\Scripts\CustomerScript.cs" />
+    <Compile Include="Assets\Scripts\Timer.cs" />
     <Compile Include="Assets\Scripts\TableScript.cs" />
     <Compile Include="Assets\Scripts\WaiterScript.cs" />
     <Compile Include="Assets\Scripts\MoneyHandler.cs" />
     <Compile Include="Assets\Scripts\CustomerSpawner.cs" />
     <Compile Include="Assets\Scripts\InputHandler.cs" />
     <Compile Include="Assets\Scripts\ChefScript.cs" />
+    <Compile Include="Assets\Scripts\LevelScript.cs" />
     <Compile Include="Assets\Scripts\JSONHandler.cs" />
     <Compile Include="Assets\Scripts\FrameRateScript.cs" />
+    <Compile Include="Assets\Scripts\AstarEnabler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

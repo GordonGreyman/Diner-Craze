@@ -10,20 +10,31 @@ public class CustomerScript : MonoBehaviour
     public SpriteRenderer rd;
     public TextMeshProUGUI text;
     public int customerType;
+
+    public float currentHappiness;
+    public int happiness = 5;           //Quit(0)-Mad(20)-Angry(40)-Neutral(60)-Pleased(80)-Excellent(100)
+    public float maxHappiness;
+
     public JSONHandler json;
     public CustomerSpawner customerSpawner;
+    public LevelScript level;
+
     public delegate void MoneyChangedHandler();
     public static event MoneyChangedHandler OnMoneyChange;
     private void Start()
     {
         customerSpawner = FindObjectOfType<CustomerSpawner>();
+        level = FindObjectOfType<LevelScript>();
         json = FindObjectOfType<JSONHandler>();
         rd = GetComponent<SpriteRenderer>();
+
+        AssignCustomerData();
+        StartCoroutine(DecreaseMoodOverTime());
     }
     public enum CurrentState
     {
-        None,
         isStanding,
+        isWalkingtoTable,
         isThinking,
         isWaitingToGiveOrders,
         isWaitingToReceiveTheOrder,
@@ -35,7 +46,7 @@ public class CustomerScript : MonoBehaviour
     {
         transform.tag = "Player";
         tableCustomerSits = transform.parent.GetComponent<TableScript>();
-        currentState = CurrentState.isThinking;
+        currentState = CurrentState.isWalkingtoTable;
         tableCustomerSits.isOccupied = true;
         GameObject a = GameObject.FindGameObjectWithTag("Player");
 
@@ -43,7 +54,6 @@ public class CustomerScript : MonoBehaviour
         {
             if (customerSpawner.activeCustomers[i] == a)
             {
-                Debug.Log("i: " + i);
                 customerSpawner.activeCustomers[i] = null;
                 break;
             }
@@ -65,11 +75,12 @@ public class CustomerScript : MonoBehaviour
 
         transform.position = targetPosition;
 
+        currentState = CurrentState.isThinking;
         rd.color = Color.green;
         text.text = currentState.ToString();
 
         float seconds = UnityEngine.Random.Range(3, 6);
-        yield return new WaitForSecondsRealtime(seconds);
+        yield return new WaitForSeconds(seconds);
 
         currentState = CurrentState.isWaitingToGiveOrders;
 
@@ -87,7 +98,7 @@ public class CustomerScript : MonoBehaviour
 
 
         float seconds = UnityEngine.Random.Range(3, 6);
-        yield return new WaitForSecondsRealtime(seconds);
+        yield return new WaitForSeconds(seconds);
 
         currentState = CurrentState.isWaitingToPay;
 
@@ -101,19 +112,106 @@ public class CustomerScript : MonoBehaviour
 
     public void PayAndLeave()
     {
+        switch (happiness)
+        {
+            case 1:
+                json.AddMoney(2);
+               level.levelSatisfaction++;
+                break;
+            case 2:
+                json.AddMoney(5);
+                level.levelSatisfaction += 2;
+                break;
+            case 3:                                     //TODO distinguish payment, tip, and customer type  
+                json.AddMoney(10);
+                level.levelSatisfaction += 3;
+                break;
+            case 4:
+                json.AddMoney(15);
+                level.levelSatisfaction += 4;
+                break;
+            case 5:
+                json.AddMoney(20);
+                level.levelSatisfaction += 5;
+                break;
+            default:
+                break;
+        }
 
-        json.AddMoney(10);
-
-        rd.color = Color.white;
         text.text = currentState.ToString();
 
         transform.parent = null;
         tableCustomerSits.isOccupied = false;
-        currentState = CurrentState.isStanding;
-        text.text = currentState.ToString();
         OnMoneyChange?.Invoke();
+
+        
         Destroy(transform.gameObject);
 
     }
 
+
+
+
+    private IEnumerator DecreaseMoodOverTime()
+    {
+
+        currentHappiness = maxHappiness;
+        while (currentHappiness > 0) 
+        {
+
+            if (currentState == CurrentState.isStanding ||
+                currentState == CurrentState.isWaitingToGiveOrders ||
+                currentState == CurrentState.isWaitingToReceiveTheOrder ||
+                currentState == CurrentState.isWaitingToPay)
+            {
+                yield return new WaitForSeconds(2);
+                currentHappiness -= 2;
+
+                if(currentHappiness / maxHappiness >= .8f)
+                {
+                    happiness = 5;
+                }
+                else if(currentHappiness / maxHappiness >= .6f)
+                {
+                    happiness = 4;
+                }
+                else if (currentHappiness / maxHappiness >= .4f)
+                {
+                    happiness = 3;
+                }
+                else if (currentHappiness / maxHappiness >= .2f)
+                {
+                    happiness = 2;
+                }
+                else if (currentHappiness / maxHappiness > .0f)
+                {
+                    happiness = 1;
+                }
+                else
+                {
+                    happiness = 0;
+                }
+            }
+            else
+            {
+                yield return null; 
+            }
+        }
+    }
+
+    private void AssignCustomerData()
+    {
+        switch (customerType)
+        {
+            case 1:
+                maxHappiness = 100;
+                break;
+            case 2:
+                maxHappiness = 120;
+                break;
+            default:
+                maxHappiness = 100;
+                break;
+        }
+    }
 }

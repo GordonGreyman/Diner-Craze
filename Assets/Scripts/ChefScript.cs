@@ -29,7 +29,7 @@ public class ChefScript : MonoBehaviour
         {
             if (platePoints[i] == null)
             {
-                GameObject food = Instantiate(foodTypes[0], new Vector3(originPointForPlates.transform.position.x + i, originPointForPlates.transform.position.y, originPointForPlates.transform.position.z), Quaternion.identity);
+                GameObject food = Instantiate(foodTypes[0], new Vector3(originPointForPlates.transform.position.x + i * 1.2f, originPointForPlates.transform.position.y, originPointForPlates.transform.position.z), Quaternion.identity);
                 food.GetComponent<FoodScript>().chefThatPrepared = transform.gameObject;
                 platePoints[i] = food; 
                 break;

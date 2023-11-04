@@ -1,8 +1,8 @@
 [System.Serializable]
 public class GameData
 {
-    public int money;
-    public int level;
+    public int money = 0;
+    public int level =1;
     public int tableCount = 3;
     public float prestige = 1;
 

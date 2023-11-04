@@ -57,7 +57,10 @@ public class InputHandler : MonoBehaviour
         if (hit.collider != null)
         {
             activeTouchedObject = hit.collider.gameObject;
-
+        }
+        else
+        {
+            StartCoroutine(ReturnToWaiter());
         }
     }
 
@@ -71,15 +74,36 @@ public class InputHandler : MonoBehaviour
             if (hit.collider != null && hit.collider.gameObject == activeTouchedObject)
             {
 
+                if (activeTouchedObject.CompareTag("Food"))
+                {
 
-                if (activeTouchedObject.CompareTag("Chef"))
+                    if (selectedPerson == SelectedPerson.Waiter && waiterObj.GetComponent<WaiterScript>().currentState == WaiterScript.CurrentState.Free)
+                    {
+                        FoodScript food = activeTouchedObject.GetComponent<FoodScript>();
+                        ChefScript chef = food.chefThatPrepared.GetComponent<ChefScript>();
+                        WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
+
+                        for (int i = 0; i < chef.platePoints.Count; i++)
+                        {
+
+                            if (food.gameObject == chef.platePoints[i])
+                            {
+                                chef.platePoints[i] = null;
+                                waiter.food = food;
+                                StartCoroutine(waiter.GetTheFood());
+                            }
+                        }
+                    }
+
+                }
+
+                else if (activeTouchedObject.CompareTag("Chef"))
                 {
                     if (selectedPerson == SelectedPerson.Waiter)
                     {
 
                         chefObj = activeTouchedObject;
                         ChefScript chef = chefObj.GetComponent<ChefScript>();
-
                         WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
 
                         if (chef.currentState == ChefScript.CurrentState.Free && waiter.currentState == WaiterScript.CurrentState.GotTheOrder)
@@ -98,8 +122,7 @@ public class InputHandler : MonoBehaviour
                     }
                     else
                     {
-                        ClearPeople();
-                        selectedPerson = SelectedPerson.Chef;
+                        StartCoroutine(ReturnToWaiter());
                     }
                 }
 
@@ -186,10 +209,11 @@ public class InputHandler : MonoBehaviour
                                 StartCoroutine(waiter.WalkWithoutAction());
                             }
                         }
-                    }       
+                    }
+                            // WAITER'S TABLE BEHAVIOR ENDS
                 }
 
-                // WAITER'S TABLE    BEHAVIOR ENDS
+
 
 
 
@@ -209,31 +233,6 @@ public class InputHandler : MonoBehaviour
                         waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
                     }
                 }
-
-
-                else if (activeTouchedObject.CompareTag("Food"))
-                {
-
-                    if (selectedPerson == SelectedPerson.Waiter && waiterObj.GetComponent<WaiterScript>().currentState == WaiterScript.CurrentState.Free)
-                    {
-                        FoodScript food = activeTouchedObject.GetComponent<FoodScript>();
-                        ChefScript chef = food.chefThatPrepared.GetComponent<ChefScript>();
-                        WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
-
-                        for (int i = 0; i < chef.platePoints.Count; i++)
-                        {
-
-                            if (food.gameObject == chef.platePoints[i])
-                            {
-                                chef.platePoints[i] = null;
-                                waiter.food = food;
-                                StartCoroutine(waiter.GetTheFood());
-                            }
-                        }
-                    }
-
-                }
-
             }
             activeTouchedObject = null;
         }
@@ -249,9 +248,15 @@ public class InputHandler : MonoBehaviour
     private IEnumerator ReturnToWaiter()
     {
         selectedPerson = SelectedPerson.None;
-        customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
-        customerObj = null;
-        yield return new WaitForSecondsRealtime(0.1f);
+
+        if(customerObj != null)
+        {
+            customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
+            customerObj = null;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
         if(waiterObj != null)
         {
             selectedPerson = SelectedPerson.Waiter;

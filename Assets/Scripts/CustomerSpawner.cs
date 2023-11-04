@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class CustomerSpawner : MonoBehaviour
 {
     public JSONHandler json;
@@ -9,18 +8,26 @@ public class CustomerSpawner : MonoBehaviour
     public List<GameObject> activeCustomers = new List<GameObject>();
     public GameObject spawnPoint;
     public bool isSwiping = false;
+    public bool dayEnded = false;
+
+    public int totalCustomerCount = 0;
 
     private float yOffset = 1.0f; 
 
     void Start()
     {
         StartCoroutine(SpawnCustomers());
+        Timer.TimesUp += EndTheDay;
     }
 
+    private void OnDestroy()
+    {
+        Timer.TimesUp -= EndTheDay;
+    }
     private IEnumerator SpawnCustomers()
     {
-        yield return new WaitForSecondsRealtime(.1f);
-
+        yield return new WaitForSeconds(.1f);
+        
         while (true)
         {
             bool hasEmptyPlace = false;
@@ -37,23 +44,29 @@ public class CustomerSpawner : MonoBehaviour
             if (hasEmptyPlace && !isSwiping)
             {
                 float wait = 5f / json.GetPrestige();
-                yield return new WaitForSecondsRealtime(wait);
+                yield return new WaitForSeconds(wait);
 
-                for (int i = 0; i < activeCustomers.Count; i++)
-                {
-                    if (activeCustomers[i] == null)
+                if (!dayEnded) 
+                { 
+                    for (int i = 0; i < activeCustomers.Count; i++)
                     {
-                        Vector3 spawnPosition = spawnPoint.transform.position + new Vector3(0, yOffset * i, 0);
-                        GameObject instantiatedCustomer = Instantiate(customerType[0], spawnPosition, Quaternion.identity);
-                        activeCustomers[i] = instantiatedCustomer;
-                        float r = Random.Range(0f, 1f);
-                        float g = Random.Range(0f, 1f);
-                        float b = Random.Range(0f, 1f);
+                        if (activeCustomers[i] == null)
+                        {
+                            Vector3 spawnPosition = spawnPoint.transform.position + new Vector3(0, yOffset * i, 0);
+                            GameObject instantiatedCustomer = Instantiate(customerType[0], spawnPosition, Quaternion.identity);
+                            activeCustomers[i] = instantiatedCustomer;
 
-                        // Create a random color
-                        Color randomColor = new Color(r, g, b);
-                        activeCustomers[i].GetComponent<SpriteRenderer>().color = randomColor;
-                        break;
+                            float r = Random.Range(0f, 1f);
+                            float g = Random.Range(0f, 1f);
+                            float b = Random.Range(0f, 1f);
+
+                            Color randomColor = new Color(r, g, b);
+                            activeCustomers[i].GetComponent<SpriteRenderer>().color = randomColor;
+
+                            totalCustomerCount++;
+
+                            break;
+                        }
                     }
                 }
             }
@@ -94,6 +107,11 @@ public class CustomerSpawner : MonoBehaviour
             yield return null;
         }
         customer.transform.position = targetPosition;
+    }
 
+
+    private void EndTheDay()
+    {
+        dayEnded = true;
     }
 }

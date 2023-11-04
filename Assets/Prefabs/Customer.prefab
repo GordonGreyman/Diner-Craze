@@ -117,11 +117,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f73d9ea0e8e04447a95a5e49f3e6b49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 1
+  currentState: 0
   tableCustomerSits: {fileID: 0}
   rd: {fileID: 0}
   text: {fileID: 1547242777443601654}
-  customerType: 0
+  customerType: 2
+  currentHappiness: 0
+  happiness: 5
+  maxHappiness: 0
   json: {fileID: 0}
   customerSpawner: {fileID: 0}
 --- !u!114 &8619250781681809778

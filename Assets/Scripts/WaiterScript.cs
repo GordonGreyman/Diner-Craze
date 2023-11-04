@@ -69,7 +69,7 @@ public class WaiterScript : MonoBehaviour
         currentState = previousState;
         text.text = currentState.ToString();
         performingAnAction = false;
-        if (table.isDirty)
+        if (table.isDirty && table.isOccupied)
         {
            table.customer.PayAndLeave();
         }
