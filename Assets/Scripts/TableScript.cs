@@ -7,6 +7,7 @@ public class TableScript : MonoBehaviour
     public bool waiterHandles = false;
     public GameObject sittingCustomer;
     public CustomerScript customer;
+    public int expectedOrder;
 
     public SpriteRenderer rd;
 

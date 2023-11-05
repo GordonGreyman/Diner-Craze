@@ -118,16 +118,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 0
-  tableCustomerSits: {fileID: 0}
   rd: {fileID: 0}
   text: {fileID: 1547242777443601654}
   customerType: 2
+  menu: 3
+  order: 0
   currentHappiness: 0
   happiness: 5
   maxHappiness: 0
   json: {fileID: 0}
+  tableCustomerSits: {fileID: 0}
   customerSpawner: {fileID: 0}
   level: {fileID: 0}
+  menuScript: {fileID: 0}
 --- !u!114 &8619250781681809778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,7 +202,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 378
   m_TargetDisplay: 0
 --- !u!114 &1547242777313230067
 MonoBehaviour:

@@ -1,29 +1,35 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
-using System;
 
 public class CustomerScript : MonoBehaviour
 {
     public CurrentState currentState = CurrentState.isStanding;
-    public TableScript tableCustomerSits;
+
     public SpriteRenderer rd;
     public TextMeshProUGUI text;
+
     public int customerType;
+    public int menu = 3;
+    public int order;
+    public int paymentCost;
 
     public float currentHappiness;
     public int happiness = 5;           //Quit(0)-Mad(20)-Angry(40)-Neutral(60)-Pleased(80)-Excellent(100)
     public float maxHappiness;
 
     public JSONHandler json;
+    public TableScript tableCustomerSits;
     public CustomerSpawner customerSpawner;
     public LevelScript level;
+    public MenuScript menuScript;
 
     public delegate void MoneyChangedHandler();
     public static event MoneyChangedHandler OnMoneyChange;
     private void Start()
     {
         customerSpawner = FindObjectOfType<CustomerSpawner>();
+        menuScript = FindObjectOfType<MenuScript>();
         level = FindObjectOfType<LevelScript>();
         json = FindObjectOfType<JSONHandler>();
         rd = GetComponent<SpriteRenderer>();
@@ -79,13 +85,15 @@ public class CustomerScript : MonoBehaviour
         rd.color = Color.green;
         text.text = currentState.ToString();
 
-        float seconds = UnityEngine.Random.Range(3, 6);
+        float seconds = Random.Range(3, 6);
         yield return new WaitForSeconds(seconds);
 
+        order = Random.Range(0, menuScript.menu.Count);
+        tableCustomerSits.expectedOrder = order;
         currentState = CurrentState.isWaitingToGiveOrders;
 
         rd.color = Color.yellow;
-        text.text = currentState.ToString();
+        text.text = order.ToString();
 
     }
 
@@ -97,7 +105,7 @@ public class CustomerScript : MonoBehaviour
         text.text = currentState.ToString();
 
 
-        float seconds = UnityEngine.Random.Range(3, 6);
+        float seconds = Random.Range(3, 6);
         yield return new WaitForSeconds(seconds);
 
         currentState = CurrentState.isWaitingToPay;
@@ -115,23 +123,23 @@ public class CustomerScript : MonoBehaviour
         switch (happiness)
         {
             case 1:
-                json.AddMoney(2);
+                json.AddMoney(2 + paymentCost);
                level.levelSatisfaction++;
                 break;
             case 2:
-                json.AddMoney(5);
+                json.AddMoney(5 + paymentCost);
                 level.levelSatisfaction += 2;
                 break;
             case 3:                                     //TODO distinguish payment, tip, and customer type  
-                json.AddMoney(10);
+                json.AddMoney(10 + paymentCost);
                 level.levelSatisfaction += 3;
                 break;
             case 4:
-                json.AddMoney(15);
+                json.AddMoney(15 + paymentCost);
                 level.levelSatisfaction += 4;
                 break;
             case 5:
-                json.AddMoney(20);
+                json.AddMoney(20 + paymentCost);
                 level.levelSatisfaction += 5;
                 break;
             default:

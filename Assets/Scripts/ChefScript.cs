@@ -5,13 +5,16 @@ using UnityEngine;
 public class ChefScript : MonoBehaviour
 {
     public CurrentState currentState = CurrentState.Free;
-    public int tableID;
-    public int orderID;
-    public GameObject[] foodTypes;
     public GameObject originPointForPlates;
-
     public List<GameObject> platePoints = new List<GameObject>();
+    public int orderID;
 
+    private MenuScript menuScript;
+
+    private void Start()
+    {
+        menuScript = FindObjectOfType<MenuScript>();
+    }
 
     public enum CurrentState
     {
@@ -29,7 +32,7 @@ public class ChefScript : MonoBehaviour
         {
             if (platePoints[i] == null)
             {
-                GameObject food = Instantiate(foodTypes[0], new Vector3(originPointForPlates.transform.position.x + i * 1.2f, originPointForPlates.transform.position.y, originPointForPlates.transform.position.z), Quaternion.identity);
+                GameObject food = Instantiate(menuScript.menu[orderID], new Vector3(originPointForPlates.transform.position.x + i * 1.2f, originPointForPlates.transform.position.y, originPointForPlates.transform.position.z), Quaternion.identity);
                 food.GetComponent<FoodScript>().chefThatPrepared = transform.gameObject;
                 platePoints[i] = food; 
                 break;

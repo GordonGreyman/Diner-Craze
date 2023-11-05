@@ -203,13 +203,9 @@ public class InputHandler : MonoBehaviour
                                 // Waiter delivers food
                                 StartCoroutine(waiter.ServeTheFood());
                             }
-                            else if (table.customer.currentState == CustomerScript.CurrentState.isWaitingToPay)
+                            else if (!waiter.performingAnAction)
                             {
-                                StartCoroutine(waiter.WalkWithoutAction());
-                            }
-                            else if (waiter.currentState != WaiterScript.CurrentState.Walking && waiter.currentState != WaiterScript.CurrentState.ClearingTable)
-                            {
-                                StartCoroutine(waiter.WalkWithoutAction());
+                                StartCoroutine(waiter.WalkWithoutAction()); //also collects payment
                             }
                         }
                     }

@@ -11,10 +11,15 @@ public class WaiterScript : MonoBehaviour
     public bool performingAnAction = false;
     private float stopDistance = 0.2f;
     private float checkDistance = 1f;
+
     public TextMeshProUGUI text;
     public TableScript table;
     public ChefScript chef;
     public FoodScript food;
+
+    public int orderOfCustomer;
+    public int carriedFoodType;
+    public int costOfFood;
 
     private void Start()
     {
@@ -170,6 +175,7 @@ public class WaiterScript : MonoBehaviour
             table.customer.text.text = table.customer.currentState.ToString();
             table.waiterHandles = false;
 
+            orderOfCustomer = table.customer.order;
             currentState = CurrentState.GotTheOrder;
             text.text = currentState.ToString();
             transform.SetParent(table.transform);
@@ -203,6 +209,7 @@ public class WaiterScript : MonoBehaviour
         aiDestinationSetter.target = null;
         aiPath.enabled = false;
 
+        chef.orderID = orderOfCustomer;
         chef.currentState = ChefScript.CurrentState.CookingFood;
         StartCoroutine(chef.PrepareFood());
 
@@ -236,6 +243,8 @@ public class WaiterScript : MonoBehaviour
         aiDestinationSetter.target = null;
         aiPath.enabled = false;
 
+        carriedFoodType = food.type;
+        costOfFood = food.cost;
         Destroy(food.gameObject);
         currentState = CurrentState.CarryingFood;
         text.text = currentState.ToString();
@@ -246,7 +255,7 @@ public class WaiterScript : MonoBehaviour
 
     public IEnumerator ServeTheFood()
     {
-        if (!WaiterIsPresent())
+        if (!WaiterIsPresent() && table.expectedOrder == carriedFoodType)
         {
             performingAnAction = true;
             currentState = CurrentState.Walking;
@@ -270,6 +279,7 @@ public class WaiterScript : MonoBehaviour
             aiDestinationSetter.target = null;
             aiPath.enabled = false;
 
+            table.customer.paymentCost = costOfFood;
             StartCoroutine(table.customer.Eat());
             table.waiterHandles = false;
 
