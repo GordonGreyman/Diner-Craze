@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7839287542207504690}
   - component: {fileID: 39920993551668028}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4086,7 +4086,7 @@ GameObject:
   - component: {fileID: 6722396397749989303}
   - component: {fileID: 6722396397749989300}
   - component: {fileID: 6722396397749989305}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: 'Waiter '
   m_TagString: Waiter
   m_Icon: {fileID: 0}
@@ -4313,7 +4313,7 @@ GameObject:
   - component: {fileID: 6722396398986323469}
   - component: {fileID: 6722396398986323466}
   - component: {fileID: 6722396398986323467}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4449,7 +4449,7 @@ GameObject:
   - component: {fileID: 6722396399051412747}
   - component: {fileID: 6722396399051412744}
   - component: {fileID: 6722396399051412745}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}

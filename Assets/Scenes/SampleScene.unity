@@ -838,6 +838,12 @@ MonoBehaviour:
   waiterObj: {fileID: 0}
   customerObj: {fileID: 0}
   chefObj: {fileID: 0}
+  foodLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  waiterLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!4 &592314456
 Transform:
   m_ObjectHideFlags: 0
@@ -2487,7 +2493,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6722396397749989305, guid: d802ba1143ef5c442a8ab46bf227b2e3, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6722396399051412747, guid: d802ba1143ef5c442a8ab46bf227b2e3, type: 3}
       propertyPath: m_Camera
@@ -3159,7 +3165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6722396397749989305, guid: d802ba1143ef5c442a8ab46bf227b2e3, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6722396399051412747, guid: d802ba1143ef5c442a8ab46bf227b2e3, type: 3}
       propertyPath: m_Camera

@@ -9,7 +9,8 @@ public class InputHandler : MonoBehaviour
     public GameObject waiterObj;
     public GameObject customerObj;
     public GameObject chefObj;
-
+    public LayerMask foodLayer;
+    public LayerMask waiterLayer;
     public enum SelectedPerson
     {
         None,
@@ -53,35 +54,84 @@ public class InputHandler : MonoBehaviour
     {
         Vector2 touchPosition = mainCamera.ScreenToWorldPoint(inputPosition);
 
-        // Perform the raycast.
         RaycastHit2D[] hits = Physics2D.RaycastAll(touchPosition, Vector2.zero);
 
-        // If there's more than one hit, prioritize food.
         if (hits.Length > 1)
         {
             foreach (var hit in hits)
             {
-                if (hit.collider.CompareTag("Food"))
+                if (hit.collider.CompareTag("Food") || hit.collider.CompareTag("Waiter"))
                 {
                     activeTouchedObject = hit.collider.gameObject;
-                    return; // Prioritize food and exit the loop.
+                    return; 
                 }
             }
         }
 
-        // If no food was found or there's only one hit, check for other objects (e.g., chef).
         foreach (var hit in hits)
         {
             activeTouchedObject = hit.collider.gameObject;
-            return; // Use the first hit.
+            return; 
         }
 
-        // If no hits at all, return to waiter.
         StartCoroutine(ReturnToWaiter());
     }
 
     private void HandleTouchEnd(Vector2 inputPosition)
     {
+        if (activeTouchedObject != null && activeTouchedObject.CompareTag("Food"))
+        {
+            Vector2 touchPosition = mainCamera.ScreenToWorldPoint(inputPosition);
+            RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero, Mathf.Infinity, foodLayer);
+
+            if (hit.collider != null && hit.collider.gameObject == activeTouchedObject)
+            {
+                if (selectedPerson == SelectedPerson.Waiter && waiterObj.GetComponent<WaiterScript>().currentState == WaiterScript.CurrentState.Free)
+                {
+                    FoodScript food = activeTouchedObject.GetComponent<FoodScript>();
+                    ChefScript chef = food.chefThatPrepared.GetComponent<ChefScript>();
+                    WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
+
+                    for (int i = 0; i < chef.platePoints.Count; i++)
+                    {
+
+                        if (food.gameObject == chef.platePoints[i])
+                        {
+                            chef.platePoints[i] = null;
+                            waiter.food = food;
+                            StartCoroutine(waiter.GetTheFood());
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+
+        if (activeTouchedObject != null && activeTouchedObject.CompareTag("Waiter"))
+        {
+            Vector2 touchPosition = mainCamera.ScreenToWorldPoint(inputPosition);
+            RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero, Mathf.Infinity, waiterLayer); ;
+
+            if (hit.collider != null && hit.collider.gameObject == activeTouchedObject)
+            {
+                if (waiterObj != null)
+                {
+                    waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
+                }
+                if (customerObj != null)
+                {
+                    customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
+                }
+                ClearPeople();
+                selectedPerson = SelectedPerson.Waiter;
+                waiterObj = activeTouchedObject;
+                waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;
+
+                return;
+            }
+        }
+
+
         if (activeTouchedObject != null)
         {
             Vector2 touchPosition = mainCamera.ScreenToWorldPoint(inputPosition);
@@ -90,49 +140,8 @@ public class InputHandler : MonoBehaviour
             if (hit.collider != null && hit.collider.gameObject == activeTouchedObject)
             {
 
-                if (activeTouchedObject.CompareTag("Food"))
-                {
 
-                    if (selectedPerson == SelectedPerson.Waiter && waiterObj.GetComponent<WaiterScript>().currentState == WaiterScript.CurrentState.Free)
-                    {
-                        FoodScript food = activeTouchedObject.GetComponent<FoodScript>();
-                        ChefScript chef = food.chefThatPrepared.GetComponent<ChefScript>();
-                        WaiterScript waiter = waiterObj.GetComponent<WaiterScript>();
-
-                        for (int i = 0; i < chef.platePoints.Count; i++)
-                        {
-
-                            if (food.gameObject == chef.platePoints[i])
-                            {
-                                chef.platePoints[i] = null;
-                                waiter.food = food;
-                                StartCoroutine(waiter.GetTheFood());
-                            }
-                        }
-                    }
-
-                }
-
-
-                else if (activeTouchedObject.CompareTag("Waiter"))
-                {
-                    if (waiterObj != null)
-                    {
-                        waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
-                    }
-                    if (customerObj != null)
-                    {
-                        customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
-                    }
-                    ClearPeople();
-                    selectedPerson = SelectedPerson.Waiter;
-                    waiterObj = activeTouchedObject;
-                    waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;
-                }
-
-
-
-                else if (activeTouchedObject.CompareTag("Table"))
+                if (activeTouchedObject.CompareTag("Table"))
                 {
                     TableScript table = activeTouchedObject.GetComponent<TableScript>();
 
