@@ -33,7 +33,7 @@ public class WaiterScript : MonoBehaviour
 
     public IEnumerator WalkWithoutAction()
     {
-        if (currentState == CurrentState.Free)
+        if (!WaiterIsPresent())
         {
             performingAnAction = true;
 
@@ -67,6 +67,8 @@ public class WaiterScript : MonoBehaviour
             aiDestinationSetter.target = null;
             aiPath.enabled = false;
             table.waiterHandles = false;
+            transform.SetParent(table.transform);
+
 
             currentState = previousState;
             text.text = currentState.ToString();
@@ -78,92 +80,102 @@ public class WaiterScript : MonoBehaviour
             performingAnAction = false;
         }
     }
+
     public IEnumerator ClearTable()
     {
-        performingAnAction = true;
+        if (!WaiterIsPresent())
+        {
+            performingAnAction = true;
 
-        CurrentState previousState = currentState;
-        currentState = CurrentState.Walking;
-        text.text = currentState.ToString();
+            CurrentState previousState = currentState;
+            currentState = CurrentState.Walking;
+            text.text = currentState.ToString();
 
 
 
-        table.waiterHandles = true;
-        Transform destination = table.transform.GetChild(0);
-        aiDestinationSetter.target = destination.transform;
-        aiPath.enabled = true;
+            table.waiterHandles = true;
+            Transform destination = table.transform.GetChild(0);
+            aiDestinationSetter.target = destination.transform;
+            aiPath.enabled = true;
 
-        if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance) { 
-
-            while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
+            if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
             {
-                if (aiPath.desiredVelocity.x <= -0.1f)
+
+                while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
                 {
-                    transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    if (aiPath.desiredVelocity.x <= -0.1f)
+                    {
+                        transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    }
+                    else if (aiPath.desiredVelocity.x >= 0.1f)
+                    {
+                        transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    }
+                    yield return null;
                 }
-                else if (aiPath.desiredVelocity.x >= 0.1f)
-                {
-                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-                }
-                yield return null;
+
             }
-        
+
+            aiDestinationSetter.target = null;
+            aiPath.enabled = false;
+
+            currentState = CurrentState.ClearingTable;
+            text.text = currentState.ToString();
+            transform.SetParent(table.transform);
+
+
+            yield return new WaitForSeconds(1.5f);
+
+            table.rd.color = Color.white;
+            table.isDirty = false;
+            table.waiterHandles = false;
+
+            currentState = previousState;
+            text.text = currentState.ToString();
+            performingAnAction = false;
         }
-
-        aiDestinationSetter.target = null;
-        aiPath.enabled = false;
-
-        currentState = CurrentState.ClearingTable;
-        text.text = currentState.ToString();
-
-
-        yield return new WaitForSeconds(1.5f);
-
-        table.rd.color = Color.white;
-        table.isDirty = false;
-        table.waiterHandles = false;
-
-        currentState = previousState;
-        text.text = currentState.ToString();
-        performingAnAction = false;
     }
 
     public IEnumerator GetTheOrder()
     {
-        performingAnAction = true;
-
-        currentState = CurrentState.Walking;
-        text.text = currentState.ToString();
-
-
-        table.waiterHandles = true;
-
-        Transform destination = table.transform.GetChild(0);
-        aiDestinationSetter.target = destination.transform;
-        aiPath.enabled = true;
-
-        if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
+        if (!WaiterIsPresent())
         {
+            performingAnAction = true;
 
-            while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
+            currentState = CurrentState.Walking;
+            text.text = currentState.ToString();
+
+
+            table.waiterHandles = true;
+
+            Transform destination = table.transform.GetChild(0);
+            aiDestinationSetter.target = destination.transform;
+            aiPath.enabled = true;
+
+            if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
             {
-                yield return null;
+
+                while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
+                {
+                    yield return null;
+                }
+
             }
 
+            aiDestinationSetter.target = null;
+            aiPath.enabled = false;
+
+            table.customer.currentState = CustomerScript.CurrentState.isWaitingToReceiveTheOrder;
+            table.customer.rd.color = Color.cyan;
+            table.customer.text.text = table.customer.currentState.ToString();
+            table.waiterHandles = false;
+
+            currentState = CurrentState.GotTheOrder;
+            text.text = currentState.ToString();
+            transform.SetParent(table.transform);
+
+            performingAnAction = false;
         }
-
-        aiDestinationSetter.target = null;
-        aiPath.enabled = false;
-
-        table.customer.currentState = CustomerScript.CurrentState.isWaitingToReceiveTheOrder;
-        table.customer.rd.color = Color.cyan;
-        table.customer.text.text = table.customer.currentState.ToString();
-        table.waiterHandles = false;
-
-        currentState = CurrentState.GotTheOrder;
-        text.text = currentState.ToString();
-        performingAnAction = false;
-
     }
 
 
@@ -196,6 +208,9 @@ public class WaiterScript : MonoBehaviour
 
         currentState = CurrentState.Free;
         text.text = currentState.ToString();
+        transform.parent = null;
+
+
         performingAnAction = false;
     }
 
@@ -224,39 +239,60 @@ public class WaiterScript : MonoBehaviour
         Destroy(food.gameObject);
         currentState = CurrentState.CarryingFood;
         text.text = currentState.ToString();
+        transform.parent = null;
+
         performingAnAction = false;
     }
 
     public IEnumerator ServeTheFood()
     {
-        performingAnAction = true;
-        currentState = CurrentState.Walking;
-        text.text = currentState.ToString();
-
-
-        table.waiterHandles = true;
-
-        Transform destination = table.transform.GetChild(0);
-        aiDestinationSetter.target = destination.transform;
-        aiPath.enabled = true;
-
-        if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
+        if (!WaiterIsPresent())
         {
-            while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
+            performingAnAction = true;
+            currentState = CurrentState.Walking;
+            text.text = currentState.ToString();
+
+
+            table.waiterHandles = true;
+
+            Transform destination = table.transform.GetChild(0);
+            aiDestinationSetter.target = destination.transform;
+            aiPath.enabled = true;
+
+            if (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > checkDistance)
             {
-                yield return null;
+                while (Vector3.Distance(transform.position, aiDestinationSetter.target.transform.position) > stopDistance)
+                {
+                    yield return null;
+                }
+            }
+
+            aiDestinationSetter.target = null;
+            aiPath.enabled = false;
+
+            StartCoroutine(table.customer.Eat());
+            table.waiterHandles = false;
+
+            currentState = CurrentState.Free;
+            text.text = currentState.ToString();
+            transform.SetParent(table.transform);
+
+            performingAnAction = false;
+        }
+    }
+
+
+    private bool WaiterIsPresent()
+    {
+        for (int i = 0; i < table.transform.childCount; i++)
+        {
+            Transform child = table.transform.GetChild(i);
+            if (child.name.Contains("Waiter") && child != transform)
+            {
+                return true;
             }
         }
-
-        aiDestinationSetter.target = null;
-        aiPath.enabled = false;
-
-        StartCoroutine(table.customer.Eat());
-        table.waiterHandles = false;
-
-        currentState = CurrentState.Free;
-        text.text = currentState.ToString();
-        performingAnAction = false;
+        return false;
     }
 }
 

@@ -148,7 +148,14 @@ public class InputHandler : MonoBehaviour
                     if (selectedPerson == SelectedPerson.Customer && customerObj.GetComponent<CustomerScript>().currentState == CustomerScript.CurrentState.isStanding && !table.isDirty && !table.isOccupied)
                     {
                         customerObj.transform.SetParent(table.transform);
-                        table.sittingCustomer = table.transform.GetChild(1).gameObject;
+                        for(int i = 0; i< table.transform.childCount; i++)
+                        {
+                            if (table.transform.GetChild(i).name.Contains("Customer"))
+                            {
+                                table.sittingCustomer = table.transform.GetChild(i).gameObject;
+                                break;
+                            }
+                        }
                         table.customer = table.sittingCustomer.GetComponent<CustomerScript>();
 
                         StartCoroutine(table.customer.SitAndThink());

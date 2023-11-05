@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 592314456}
   - component: {fileID: 592314455}
   m_Layer: 0
-  m_Name: Grid Action Handler
+  m_Name: Input Handler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
