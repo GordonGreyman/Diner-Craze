@@ -66,11 +66,11 @@
     <Compile Include="Assets\Scripts\CustomerSpawner.cs" />
     <Compile Include="Assets\Scripts\InputHandler.cs" />
     <Compile Include="Assets\Scripts\ChefScript.cs" />
+    <Compile Include="Assets\Scripts\MenuScript.cs" />
     <Compile Include="Assets\Scripts\LevelScript.cs" />
     <Compile Include="Assets\Scripts\JSONHandler.cs" />
     <Compile Include="Assets\Scripts\FrameRateScript.cs" />
     <Compile Include="Assets\Scripts\AstarEnabler.cs" />
-    <Compile Include="Assets\Scripts\MenuScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

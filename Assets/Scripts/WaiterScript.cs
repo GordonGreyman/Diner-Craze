@@ -82,6 +82,12 @@ public class WaiterScript : MonoBehaviour
             {
                 table.customer.PayAndLeave();
             }
+
+            if(table.customer != null && table.customer.currentState == CustomerScript.CurrentState.isWaitingToGiveOrders && currentState == CurrentState.Free)
+            {
+                StartCoroutine(GetTheOrder());
+            }
+
             performingAnAction = false;
         }
     }
@@ -246,9 +252,44 @@ public class WaiterScript : MonoBehaviour
         carriedFoodType = food.type;
         costOfFood = food.cost;
         Destroy(food.gameObject);
+
         currentState = CurrentState.CarryingFood;
         text.text = currentState.ToString();
+
         transform.parent = null;
+
+
+        var tables = FindObjectsOfType<TableScript>();
+
+        foreach (TableScript table in tables)
+        {
+            for (int i = 0; i < table.transform.childCount; i++)
+            {
+                if (table.transform.GetChild(i).name.Contains("Highlight"))
+                {
+                    table.transform.GetChild(i).gameObject.SetActive(false);
+                }
+            }
+
+            if (currentState == CurrentState.CarryingFood)
+            {
+
+                if (table.expectedOrder == carriedFoodType)
+                {
+
+                    for (int i = 0; i < table.transform.childCount; i++)
+                    {
+                        if (table.transform.GetChild(i).name.Contains("Highlight") && table.customer != null && table.customer.currentState == CustomerScript.CurrentState.isWaitingToReceiveTheOrder)
+                        {
+                            table.transform.GetChild(i).gameObject.SetActive(true);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
 
         performingAnAction = false;
     }
@@ -287,7 +328,17 @@ public class WaiterScript : MonoBehaviour
             text.text = currentState.ToString();
             transform.SetParent(table.transform);
 
-            performingAnAction = false;
+            
+                for (int i = 0; i < table.transform.childCount; i++)
+                {
+                    if (table.transform.GetChild(i).name.Contains("Highlight"))
+                    {
+                        table.transform.GetChild(i).gameObject.SetActive(false);
+                    }
+                
+            }
+
+                performingAnAction = false;
         }
     }
 

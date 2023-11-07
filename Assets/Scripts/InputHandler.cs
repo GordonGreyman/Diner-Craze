@@ -122,11 +122,42 @@ public class InputHandler : MonoBehaviour
                 {
                     customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
                 }
+
                 ClearPeople();
                 selectedPerson = SelectedPerson.Waiter;
                 waiterObj = activeTouchedObject;
+
                 waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;
 
+
+                var tables = FindObjectsOfType<TableScript>();
+
+                foreach (TableScript table in tables)
+                {
+                    for (int i = 0; i < table.transform.childCount; i++)
+                    {
+                        if (table.transform.GetChild(i).name.Contains("Highlight"))
+                        {
+                            table.transform.GetChild(i).gameObject.SetActive(false);
+                        }
+                    }
+
+                    if (waiterObj.GetComponent<WaiterScript>().currentState == WaiterScript.CurrentState.CarryingFood)
+                    {
+
+                        if (table.expectedOrder == waiterObj.GetComponent<WaiterScript>().carriedFoodType)
+                        {
+
+                            for(int i = 0; i < table.transform.childCount; i++)
+                            {
+                                if (table.transform.GetChild(i).name.Contains("Highlight") && table.customer != null && table.customer.currentState == CustomerScript.CurrentState.isWaitingToReceiveTheOrder)
+                                {
+                                    table.transform.GetChild(i).gameObject.SetActive(true);
+                                }                          
+                            }
+                        }
+                    }
+                }
                 return;
             }
         }
@@ -249,17 +280,22 @@ public class InputHandler : MonoBehaviour
                     if(customerObj != null)
                     {
                         customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;                   //Take the already highlightened customer and de-highlight it
-
                     }
+
                     selectedPerson = SelectedPerson.Customer;
                     customerObj = activeTouchedObject;
                     customerObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;                        //Highlight the current customer and de-highlight the last waiter
+
+
                     if (waiterObj != null)
                     {
                         waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = false;
                     }
+
+                    DisableTableHighlight();
                 }
             }
+
             activeTouchedObject = null;
         }
     }
@@ -287,6 +323,43 @@ public class InputHandler : MonoBehaviour
         {
             selectedPerson = SelectedPerson.Waiter;
             waiterObj.transform.GetChild(1).GetComponent<Light2D>().enabled = true;
+
+            var tables = FindObjectsOfType<TableScript>();
+
+            foreach (TableScript table in tables)
+            {
+
+                if (waiterObj.GetComponent<WaiterScript>().currentState == WaiterScript.CurrentState.CarryingFood)
+                {
+
+                    if (table.expectedOrder == waiterObj.GetComponent<WaiterScript>().carriedFoodType)
+                    {
+                        for (int i = 0; i < table.transform.childCount; i++)
+                        {
+                            if (table.transform.GetChild(i).name.Contains("Highlight") && table.customer != null && table.customer.currentState == CustomerScript.CurrentState.isWaitingToReceiveTheOrder)
+                            {
+                                table.transform.GetChild(i).gameObject.SetActive(true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void DisableTableHighlight()
+    {
+        var tables = FindObjectsOfType<TableScript>();
+
+        foreach (TableScript table in tables)
+        {
+            for (int i = 0; i < table.transform.childCount; i++)
+            {
+                if (table.transform.GetChild(i).name.Contains("Highlight"))
+                {
+                    table.transform.GetChild(i).gameObject.SetActive(false);
+                }
+            }
         }
     }
 }
