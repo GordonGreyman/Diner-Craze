@@ -83,7 +83,6 @@ public class CustomerScript : MonoBehaviour
 
         currentState = CurrentState.isThinking;
         rd.color = Color.green;
-        text.text = currentState.ToString();
 
         float seconds = Random.Range(3, 6);
         yield return new WaitForSeconds(seconds);
@@ -102,8 +101,6 @@ public class CustomerScript : MonoBehaviour
     {
         currentState = CurrentState.isEating;
         rd.color = Color.red;
-        text.text = currentState.ToString();
-
 
         float seconds = Random.Range(3, 6);
         yield return new WaitForSeconds(seconds);
@@ -111,7 +108,6 @@ public class CustomerScript : MonoBehaviour
         currentState = CurrentState.isWaitingToPay;
 
         rd.color = Color.blue;
-        text.text = currentState.ToString();
 
         tableCustomerSits.rd.color = Color.black;
         tableCustomerSits.isDirty = true;

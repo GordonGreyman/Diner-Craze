@@ -16,6 +16,7 @@ public class WaiterScript : MonoBehaviour
     public TableScript table;
     public ChefScript chef;
     public FoodScript food;
+    private InputHandler inputHandler;
 
     public int orderOfCustomer;
     public int carriedFoodType;
@@ -23,6 +24,7 @@ public class WaiterScript : MonoBehaviour
 
     private void Start()
     {
+        inputHandler = FindObjectOfType<InputHandler>();
         aiDestinationSetter = GetComponent<AIDestinationSetter>();
         aiPath = GetComponent<AIPath>();
         
@@ -178,7 +180,6 @@ public class WaiterScript : MonoBehaviour
 
             table.customer.currentState = CustomerScript.CurrentState.isWaitingToReceiveTheOrder;
             table.customer.rd.color = Color.cyan;
-            table.customer.text.text = table.customer.currentState.ToString();
             table.waiterHandles = false;
 
             orderOfCustomer = table.customer.order;
@@ -328,17 +329,33 @@ public class WaiterScript : MonoBehaviour
             text.text = currentState.ToString();
             transform.SetParent(table.transform);
 
-            
+
+            var tables = FindObjectsOfType<TableScript>();
+
+            if (inputHandler.waiterObj != null && inputHandler.waiterObj.GetComponent<WaiterScript>().currentState == CurrentState.Free)
+            {
+                foreach (TableScript table in tables)
+                {
+                    for (int i = 0; i < table.transform.childCount; i++)
+                    {
+                        if (table.transform.GetChild(i).name.Contains("Highlight"))
+                        {
+                            table.transform.GetChild(i).gameObject.SetActive(false);
+                        }
+                    }
+                }
+            }
+            else if(inputHandler.waiterObj != null && inputHandler.waiterObj.GetComponent<WaiterScript>().currentState == CurrentState.CarryingFood)
+            {
                 for (int i = 0; i < table.transform.childCount; i++)
                 {
                     if (table.transform.GetChild(i).name.Contains("Highlight"))
                     {
                         table.transform.GetChild(i).gameObject.SetActive(false);
                     }
-                
+                }
             }
-
-                performingAnAction = false;
+            performingAnAction = false;
         }
     }
 
