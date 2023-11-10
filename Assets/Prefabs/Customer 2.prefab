@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1547242777214228324}
   - component: {fileID: 8619250781681809778}
   m_Layer: 0
-  m_Name: Customer
+  m_Name: Customer 2
   m_TagString: Customer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -119,13 +119,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentState: 0
   rd: {fileID: 0}
+  canvas: {fileID: 0}
   text: {fileID: 1547242777443601654}
+  text2: {fileID: 6657022288068033512, guid: 4de65b48363c39840ba51dfcdb3fc7a9, type: 3}
+  text3: {fileID: 2342024908825433123, guid: 6c60baba7f0f6d6409cfe4920dfeeb6e, type: 3}
   customerType: 2
-  menu: 3
   order: 0
+  paymentCost: 0
   currentHappiness: 0
   happiness: 5
   maxHappiness: 0
+  tipPossibility: 0
+  thinkTime: 0
   json: {fileID: 0}
   tableCustomerSits: {fileID: 0}
   customerSpawner: {fileID: 0}

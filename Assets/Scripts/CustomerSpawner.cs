@@ -4,7 +4,7 @@ using UnityEngine;
 public class CustomerSpawner : MonoBehaviour
 {
     public JSONHandler json;
-    public GameObject[] customerType;
+    public List<GameObject> customerType = new List<GameObject>();
     public List<GameObject> activeCustomers = new List<GameObject>();
     public GameObject spawnPoint;
     public bool isSwiping = false;
@@ -53,7 +53,7 @@ public class CustomerSpawner : MonoBehaviour
                         if (activeCustomers[i] == null)
                         {
                             Vector3 spawnPosition = spawnPoint.transform.position + new Vector3(0, yOffset * i, 0);
-                            GameObject instantiatedCustomer = Instantiate(customerType[0], spawnPosition, Quaternion.identity);
+                            GameObject instantiatedCustomer = Instantiate(customerType[Random.Range(0,customerType.Count)], spawnPosition, Quaternion.identity);
                             activeCustomers[i] = instantiatedCustomer;
 
                             float r = Random.Range(0f, 1f);

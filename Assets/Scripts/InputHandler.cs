@@ -236,7 +236,7 @@ public class InputHandler : MonoBehaviour
                             }
                             else if (!waiter.performingAnAction)
                             {
-                                StartCoroutine(waiter.WalkWithoutAction()); //also collects payment
+                                StartCoroutine(waiter.WalkWithoutAction()); //also collects payment and gets the order
                             }
                         }
                     }

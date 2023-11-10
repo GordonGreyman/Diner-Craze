@@ -43,10 +43,11 @@ public class WaiterScript : MonoBehaviour
         if (!WaiterIsPresent())
         {
             performingAnAction = true;
-
             CurrentState previousState = currentState;
             currentState = CurrentState.Walking;
             text.text = currentState.ToString();
+
+            transform.SetParent(table.transform);
 
             table.waiterHandles = true;
             Transform destination = table.transform.GetChild(0);
@@ -74,15 +75,14 @@ public class WaiterScript : MonoBehaviour
             aiDestinationSetter.target = null;
             aiPath.enabled = false;
             table.waiterHandles = false;
-            transform.SetParent(table.transform);
 
 
             currentState = previousState;
             text.text = currentState.ToString();
 
-            if (table.isDirty && table.isOccupied)
+            if (table.customer != null && table.customer.currentState != CustomerScript.CurrentState.isPaying && table.isDirty && table.isOccupied)
             {
-                table.customer.PayAndLeave();
+                StartCoroutine(table.customer.PayAndLeave());
             }
 
             if(table.customer != null && table.customer.currentState == CustomerScript.CurrentState.isWaitingToGiveOrders && currentState == CurrentState.Free)
