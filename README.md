@@ -26,3 +26,5 @@ The game will follow a path like this:
 **11.** If the target goal is reached, the next day will be playable.
 
 The above will more or less be the game play loop. After the restaurant is closed for the day, the profit will be calculated after the spendings like worker wages and dish expenses, and there will be possible upgrades for the restaurant such as hiring more chefs and waiters, or improving the efficiency of the current workers, purchasing recipes for different foods that will bring more profit, buying more tables and more space to buy tables, etc.
+
+![Diner Screenshot](https://github.com/GordonGreyman/Diner-Craze/assets/141227869/3afc3ac0-f59f-4ae0-85b2-eea7d129a5a4)
